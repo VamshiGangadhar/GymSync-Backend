@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 
 exports.register = async (req, res) => {
   try {
-    const { username, password, confirmPassword } = req.body;
+    const { username, password, confirmPassword, role } = req.body;
 
     // Check if password and confirmPassword match
     if (password !== confirmPassword) {
@@ -47,7 +47,7 @@ exports.register = async (req, res) => {
       });
     }
 
-    const user = new User({ username, password });
+    const user = new User({ username, password, role });
     await user.save();
     res.status(201).send({
       success: true,
@@ -70,8 +70,9 @@ exports.login = async (req, res) => {
         .status(401)
         .send({ success: false, message: "Authentication failed" });
     }
+    const { role } = user;
     const token = jwt.sign({ _id: user._id }, "your_jwt_secret");
-    res.send({ success: true, token });
+    res.send({ success: true, token, role });
   } catch (error) {
     res.status(500).send(error.message);
   }

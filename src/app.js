@@ -24,8 +24,8 @@ app.use("/api/users", userRoutes);
 app.use("/api/test", testRoutes);
 app.use("/api/calorie-tracker", calorieTrackerRoutes);
 
-app.listen(3001, () => {
-  console.log("Server running on port 3001");
+app.listen(3003, () => {
+  console.log("Server running on port 3003");
 });
 
 module.exports = app;
