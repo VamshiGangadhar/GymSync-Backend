@@ -70,9 +70,9 @@ exports.login = async (req, res) => {
         .status(401)
         .send({ success: false, message: "Authentication failed" });
     }
-    const { role } = user;
+    const { role, _id } = user;
     const token = jwt.sign({ _id: user._id }, "your_jwt_secret");
-    res.send({ success: true, token, role });
+    res.send({ success: true, token, role, id: user._id });
   } catch (error) {
     res.status(500).send(error.message);
   }
