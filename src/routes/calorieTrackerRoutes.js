@@ -8,6 +8,7 @@ const {
   updateMeal,
   deleteMeal,
   getDailySummary,
+  getWeeklySummary,
 } = require('../controllers/calorieTrackerController');
 
 // Route to get user's calorie data
@@ -24,5 +25,7 @@ router.delete('/:userId/meal/:mealId', deleteMeal);
 
 // Route to get daily calorie summary
 router.get('/:userId/summary', getDailySummary);
+
+router.get('/:userId/weekly-summary', getWeeklySummary);
 
 module.exports = router;

@@ -1,6 +1,6 @@
 const Calories = require("../models/caloriesModel");
 const User = require("../models/User");
-const foodCalorieDB = require("../static/foodCalorieDB.json")
+const foodCalorieDB = require("../static/foodCalorieDB.json");
 
 // Get user's calorie data
 const getUserCalorieData = async (req, res) => {
@@ -34,7 +34,6 @@ const getUserCalorieData = async (req, res) => {
       .json({ error: "Error fetching calorie data", details: err.message });
   }
 };
-
 
 const addMeal = async (req, res) => {
   try {
@@ -134,7 +133,10 @@ const getDailySummary = async (req, res) => {
       date: { $gte: new Date(date), $lt: new Date(date + "T23:59:59") },
     });
 
-    const totalCalories = meals.reduce((sum, meal) => sum + meal.totalCalories, 0);
+    const totalCalories = meals.reduce(
+      (sum, meal) => sum + meal.totalCalories,
+      0
+    );
 
     res.status(200).json({ totalCalories, meals });
   } catch (err) {
@@ -144,10 +146,38 @@ const getDailySummary = async (req, res) => {
   }
 };
 
+const getWeeklySummary = async (req, res) => {
+  const { userId } = req.params;
+  const today = new Date();
+  const startOfWeek = new Date(today.setDate(today.getDate() - 7));
+  const endOfWeek = new Date();
+
+  console.log(startOfWeek, endOfWeek);
+
+  try {
+    const meals = await Calories.find({
+      userId,
+      date: { $gte: startOfWeek, $lt: endOfWeek },
+    });
+
+    const totalCalories = meals.reduce(
+      (sum, meal) => sum + meal.calories,
+      0
+    );
+
+    res.status(200).json({ totalCalories, meals });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ error: "Error fetching weekly summary", details: err.message });
+  }
+};
+
 module.exports = {
   getUserCalorieData,
   addMeal,
   updateMeal,
   deleteMeal,
   getDailySummary,
+  getWeeklySummary,
 };
