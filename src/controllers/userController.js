@@ -4,7 +4,15 @@ const jwt = require("jsonwebtoken");
 
 exports.register = async (req, res) => {
   try {
-    const { username, password, confirmPassword, role } = req.body;
+    const {
+      username,
+      password,
+      confirmPassword,
+      role,
+      gym,
+      joiningDate,
+      email,
+    } = req.body;
 
     // Check if password and confirmPassword match
     if (password !== confirmPassword) {
@@ -47,7 +55,14 @@ exports.register = async (req, res) => {
       });
     }
 
-    const user = new User({ username, password, role });
+    const user = new User({
+      username,
+      password,
+      role,
+      gym,
+      joiningDate,
+      email,
+    });
     await user.save();
     res.status(201).send({
       success: true,
@@ -75,5 +90,45 @@ exports.login = async (req, res) => {
     res.send({ success: true, token, role, id: user._id });
   } catch (error) {
     res.status(500).send(error.message);
+  }
+};
+
+exports.getGymMembers = async (req, res) => {
+  try {
+    const { gym } = req.params;
+    const users = await User.find({ gym }).select("username role -_id").lean();
+    const formattedUsers = users.map((user, index) => ({
+      index: index + 1,
+      id: user.id || "",
+      username: user.username || "",
+      email: "",
+      role: user.role || "user",
+      joinDate: "",
+    }));
+    res.status(200).json(formattedUsers);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ error: "Error fetching gym members", details: err.message });
+  }
+};
+
+exports.updateUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { username, role, email, joiningDate } = req.body;
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: userId },
+      { username, role, email, joiningDate },
+      { new: true }
+    );
+    if (!updatedUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    res.status(200).json(updatedUser);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ error: "Error updating user", details: err.message });
   }
 };
