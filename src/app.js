@@ -6,6 +6,7 @@ require("dotenv").config();
 const userRoutes = require("./routes/userRoutes");
 const testRoutes = require("./routes/testRoutes");
 const calorieTrackerRoutes = require("./routes/calorieTrackerRoutes")
+const workOutTrackerRoutes = require("./routes/workOutTrackerRoutes");
 
 const app = express();
 
@@ -23,6 +24,7 @@ mongoose
 app.use("/api/users", userRoutes);
 app.use("/api/test", testRoutes);
 app.use("/api/calorie-tracker", calorieTrackerRoutes);
+app.use("/api/workout-tracker", workOutTrackerRoutes);
 
 app.listen(3002, () => {
   console.log("Server running on port 3002");
